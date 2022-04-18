@@ -110,11 +110,11 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install tar and gzip
-        command: |
-          sudo yum -y update
-          sudo yum -y install tar
-          sudo yum -y install gzip
+          name: Install tar and gzip
+          command: |
+            sudo yum -y update
+            sudo yum -y install tar
+            sudo yum -y install gzip
       - run:
           name: Ensure backend inftrastructure
           command: |
@@ -147,21 +147,26 @@ jobs:
       - destroy-environment:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-  # configure-infrastructure:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - checkout
-  #     - add_ssh_keys:
-  #         fingerprints: ["ff:13:97:ac:ce:6d:25:8d:88:f0:ea:01:5c:40:f9:65"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: "Install ansible"
-  #         command: apk add --update ansible
-  #     - run:
-  #         name: "run playbook"
-  #         command: ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.txt main.yml
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["ff:13:97:ac:ce:6d:25:8d:88:f0:ea:01:5c:40:f9:65"]
+      - run:
+          name: "Install ansible"
+          command:  |
+            apk add --update ansible
+            apk add --update tar
+            apk add --update gzip
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: "run playbook"
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
 workflows:
   default:
     jobs:
