@@ -7,8 +7,7 @@
 
 - name: "Extract backend files"
   shell: |
-    mkdir backend
-    tar -xvf artifact.tar.gz -C backend
+    tar -xvf artifact.tar.gz
 
 - name: "Install packages"
   shell: npm install
