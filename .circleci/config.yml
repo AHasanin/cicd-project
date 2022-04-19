@@ -16,7 +16,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -33,7 +33,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -50,7 +50,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -64,7 +64,7 @@ jobs:
     
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -78,7 +78,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -92,7 +92,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -172,7 +172,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - restore_cache:
@@ -201,7 +201,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.9.0
     steps:
       - checkout
       - attach_workspace:
@@ -311,29 +311,29 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - deploy-infrastructure:
-      #     requires:  [test-frontend, test-backend, scan-frontend, scan-backend]
-          # filters:
-          #   branches:
-          #     only:
-          #       - test-feature-branch
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+           requires: [build-frontend]
+       - test-backend:
+           requires: [build-backend]
+       - scan-frontend:
+           requires: [build-frontend]
+       - scan-backend:
+           requires: [build-backend]
+       - deploy-infrastructure:
+           requires:  [test-frontend, test-backend, scan-frontend, scan-backend]
+          #  filters:
+          #    branches:
+          #      only:
+          #        - test-feature-branch
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]

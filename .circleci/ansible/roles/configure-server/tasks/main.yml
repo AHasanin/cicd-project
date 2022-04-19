@@ -9,6 +9,9 @@
   become: yes
   apt:
     upgrade: yes
+- name: "Install node js 14"
+  become: yes
+  shell: curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 
 - name: "Install nodejs"
   become: yes
