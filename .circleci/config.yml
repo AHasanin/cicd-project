@@ -214,6 +214,7 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
+            cat ~/project/backend/migrations_dump.txt
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
                 curl --insecure https://kvdb.io/3MDtpmLtEMPiMHcXbtieuU/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
@@ -369,7 +370,7 @@ jobs:
       - revert-migrations:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-cleanup:
+  cleanup:
     docker:
       - image: amazon/aws-cli
     steps:
