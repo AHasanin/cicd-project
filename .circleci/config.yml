@@ -30,7 +30,7 @@ commands:
             then
                 cd ~/project/backend
                 npm install
-                npm run migration:revert
+                npm run migrations:revert
             fi  
 
 jobs:
@@ -323,7 +323,9 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            if curl "${API_URL}/api/status/" | grep "ok"
+            export BACKEND_IP=`awk 'NR==2' .circleci/ansible/inventory.txt`
+            API_URL="http://${BACKEND_IP}:3030/api/status/"
+            if curl ${API_URL} | grep "ok"
             then
               exit 0
             else
