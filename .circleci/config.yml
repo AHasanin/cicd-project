@@ -180,7 +180,7 @@ jobs:
             yum -y update
             yum -y install tar
             yum -y install gzip
-            amazon-linux-extras install epel
+            amazon-linux-extras enable ansible2
             yum -y install ansible
       - attach_workspace:
           at: ~/
@@ -274,7 +274,7 @@ jobs:
             yum -y install tar
             yum -y install gzip
             yum -y install nodejs
-            amazon-linux-extras install epel
+            amazon-linux-extras enable ansible2
             yum -y install ansible
       - attach_workspace:
           at: ~/
