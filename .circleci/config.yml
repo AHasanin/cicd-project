@@ -193,27 +193,75 @@ jobs:
       - destroy-environment:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-  # deploy-frontend:
-  #   docker:
-  #     - image: circleci/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apt-get -y update
-  #           apt-get -y install awscli
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           # your code here
-  #           export API_URL="http://${BACKEND_IP}:3030"
-  #           echo "${API_URL}"
-  #     - run:
-  #         name: Deploy frontend objects
-  #         command: |
-  #           # your code here
-  #     # Here's where you will add some code to rollback on failure  
+  deploy-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - restore_cahche:
+          key: frontend-modules
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get -y update
+            apt-get -y install awscli
+
+      - run:
+          name: Get backend url
+          command: |
+            BACKEND_IP=`awk 'NR==2' .circleci/ansible/inventory.txt`
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment:
+          workflowId: "${CIRCLE_WORKFLOW_ID:0:7}" 
+
+  deploy-backend:
+     docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["ff:13:97:ac:ce:6d:25:8d:88:f0:ea:01:5c:40:f9:65"]
+      - restore_cahce:
+          key: backend-modules
+      - run:
+          name: "Install ansible"
+          command:  |
+            apk add --update ansible
+            apk add --update tar
+            apk add --update gzip
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: "Build backend"
+          command: |
+            cd backend
+            npm install
+            npm run build
+      - run:
+          name: "Archive backend files"
+          command: tar -C backend -czvf artifact.tar.gz .
+      - run:
+          name: "Run playbook"
+          command: |
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment:
+          workflowId: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
@@ -238,3 +286,5 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]

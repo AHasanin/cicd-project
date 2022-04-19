@@ -1,0 +1,19 @@
+---
+
+- name: "Copy backend files"
+  copy:
+    src: ~/project/artifact.tar.gz
+    dest: ~/artifact.tar.gz
+
+- name: "Extract backend files"
+  shell: |
+    mkdir backend
+    tar -xvf artifact.tar.gz -C backend
+
+- name: "Install packages"
+  shell: npm install
+
+- name: "Run backend"
+  shell: |
+    pm2 stop default
+    pm2 start npm -- start
