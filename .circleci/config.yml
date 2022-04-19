@@ -180,7 +180,7 @@ jobs:
             apk add --update ansible
             apk add --update tar
             apk add --update gzip
-            apk add --update awscli
+            apk add --update aws-cli
       - attach_workspace:
           at: ~/
       - run:
@@ -303,7 +303,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update curl
-            apk add --update awscli
+            apk add --update aws-cli
             curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
             apk add --update nodejs
       - run:
@@ -336,6 +336,21 @@ jobs:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}" 
       - revert-migrations:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}"
+
+  # cloudfront-update:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # your code here
+  #     - run:
+  #         name: Update cloudfront distribution
+  #         command: |
+  #           # your code here
+  #     # Here's where you will add some code to rollback on failure  
 
 workflows:
   default:
