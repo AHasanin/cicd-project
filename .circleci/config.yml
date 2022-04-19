@@ -169,7 +169,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -177,10 +177,10 @@ jobs:
       - run:
           name: "Install ansible"
           command:  |
-            apk add --update ansible
-            apk add --update tar
-            apk add --update gzip
-            apk add --update aws-cli
+            yum -y update
+            yum -y install tar
+            yum -y install gzip
+            yum -y install ansible
       - attach_workspace:
           at: ~/
       - run:
@@ -258,7 +258,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -266,11 +266,14 @@ jobs:
       - restore_cache:
           key: backend-modules
       - run:
-          name: "Install ansible"
+          name: "Install packages"
           command:  |
-            apk add --update ansible
-            apk add --update tar
-            apk add --update gzip
+            curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+            yum -y update
+            yum -y install tar
+            yum -y install gzip
+            yum -y install nodejs
+            yum -y install ansible
       - attach_workspace:
           at: ~/
       - run:
@@ -296,16 +299,15 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:3.15.4 
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl
-            apk add --update aws-cli
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-            apk add --update nodejs
+            curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+            yum -y update
+            yum -y install nodejs
       - run:
           name: Get backend url
           command: |
