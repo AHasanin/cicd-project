@@ -200,7 +200,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/
-      - restore_cahche:
+      - restore_cache:
           key: frontend-modules
       - run:
           name: Install dependencies
@@ -228,13 +228,13 @@ jobs:
           workflowId: "${CIRCLE_WORKFLOW_ID:0:7}" 
 
   deploy-backend:
-     docker:
+    docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["ff:13:97:ac:ce:6d:25:8d:88:f0:ea:01:5c:40:f9:65"]
-      - restore_cahce:
+      - restore_cache:
           key: backend-modules
       - run:
           name: "Install ansible"
@@ -287,4 +287,6 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
           requires: [run-migrations]
