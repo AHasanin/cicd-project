@@ -11,6 +11,8 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            Destroying Enviroment
+            aws s3 rm "s3://udapeople-<<parameters.workflowId>>" --recursive
             aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.workflowId>>"
             aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.workflowId>>"
 
@@ -338,7 +340,7 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 1
+              exit 0
             else
               exit 1
             fi
