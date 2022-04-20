@@ -10,23 +10,35 @@
   apt:
     upgrade: yes
 
-- name: nvm
-  become: yes
+- name: Install nvm
   shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  args:
+    executable: /bin/bash
+    chdir: "$HOME"
+    creates: "$HOME/.nvm/nvm.sh"
+
+- name: Setup .profile
+  lineinfile:
+    path: ~/.profile
+    line: source ~/.nvm/nvm.sh
+    create: yes
+
+- name: Install node
+  shell: |
+    source /root/.nvm/nvm.sh && nvm install {{item}}
+  args:
+    executable: /bin/bash
+    chdir: "$HOME"
+    creates: "$HOME/.nvm/versions/node/v{{item}}"
+  loop:
+    - 13.8.0
 
 # - name: "Download node js 13"
 #   become: yes
 #   get_url:
 #     url: https://deb.nodesource.com/setup_13.x
 #     dest: ~/nodejs.bash
-
-- name: "Install node 13"
-  become: yes
-  shell: nvm install v13.8.0
 
 # - name: "Install nodejs"
 #   become: yes
