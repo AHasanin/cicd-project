@@ -10,20 +10,27 @@
   apt:
     upgrade: yes
 
-- name: "Download node js 13"
+- name: nvm
   become: yes
-  get_url:
-    url: https://deb.nodesource.com/setup_13.x
-    dest: ~/nodejs.bash
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
 
-- name: "Excute node bash"
-  become: yes
-  shell: bash ~/nodejs.bash
+# - name: "Download node js 13"
+#   become: yes
+#   get_url:
+#     url: https://deb.nodesource.com/setup_13.x
+#     dest: ~/nodejs.bash
 
-- name: "Install nodejs"
+- name: "Install node 13"
   become: yes
-  apt:
-    name: ["nodejs"]
+  shell: nvm install 13.8.0
+
+# - name: "Install nodejs"
+#   become: yes
+#   apt:
+#     name: ["nodejs"]
 
 - name: "Install pm2"
   become: yes
