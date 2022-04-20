@@ -10,40 +10,40 @@
   apt:
     upgrade: yes
 
-- name: Install nvm
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-  args:
-    executable: /bin/bash
-    chdir: "$HOME"
-    creates: "$HOME/.nvm/nvm.sh"
+# - name: Install nvm
+#   shell: |
+#     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+#   args:
+#     executable: /bin/bash
+#     chdir: "$HOME"
+#     creates: "$HOME/.nvm/nvm.sh"
 
-- name: Setup .profile
-  lineinfile:
-    path: ~/.profile
-    line: source ~/.nvm/nvm.sh
-    create: yes
+# - name: Setup .profile
+#   lineinfile:
+#     path: ~/.profile
+#     line: source ~/.nvm/nvm.sh
+#     create: yes
 
-- name: Install node
-  shell: |
-    source /root/.nvm/nvm.sh && nvm install {{item}}
-  args:
-    executable: /bin/bash
-    chdir: "$HOME"
-    creates: "$HOME/.nvm/versions/node/v{{item}}"
-  loop:
-    - 13.8.0
+# - name: Install node
+#   shell: |
+#     source /root/.nvm/nvm.sh && nvm install {{item}}
+#   args:
+#     executable: /bin/bash
+#     chdir: "$HOME"
+#     creates: "$HOME/.nvm/versions/node/v{{item}}"
+#   loop:
+#     - 13.8.0
 
-# - name: "Download node js 13"
-#   become: yes
-#   get_url:
-#     url: https://deb.nodesource.com/setup_13.x
-#     dest: ~/nodejs.bash
+- name: "Download node js 14"
+  become: yes
+  get_url:
+    url: https://deb.nodesource.com/setup_14.x
+    dest: ~/nodejs.bash
 
-# - name: "Install nodejs"
-#   become: yes
-#   apt:
-#     name: ["nodejs"]
+- name: "Install nodejs"
+  become: yes
+  apt:
+    name: ["nodejs"]
 
 - name: "Install pm2"
   become: yes
