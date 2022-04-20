@@ -25,7 +25,7 @@
 
 - name: "Install node 13"
   become: yes
-  shell: nvm install 13.8.0
+  shell: nvm install v13.8.0
 
 # - name: "Install nodejs"
 #   become: yes
