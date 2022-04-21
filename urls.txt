@@ -1,0 +1,2 @@
+URL01: https://github.com/AHasanin/cicd-project.git 
+URL02: http://udapeople-f20b52b.s3-website-us-east-1.amazonaws.com
